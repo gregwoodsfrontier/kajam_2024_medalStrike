@@ -1,47 +1,46 @@
-import kaplay from "kaplay"
-import "kaplay/global"
-import { collider, circleCollider } from "./collider"
+import kaplay from "kaplay";
+import "kaplay/global";
+import { collider, circleCollider } from "./collider";
 // import { springJoint, targetJoint } from "./joint"
-import { pointEffector, surfaceEffector } from "./effectors"
-import { rigidBody } from "./rigid_body"
-import { world, planckIntegration } from "./world"
+// import { pointEffector, surfaceEffector } from "./effectors"
+import { rigidBody } from "./rigid_body";
+import { world, planckIntegration } from "./world";
 
 // initialize context
 kaplay({
-    plugins: [planckIntegration]
-})
-
+  plugins: [planckIntegration],
+});
 
 onUpdate(() => {
-    const timeStep = 1 / 60
-    const velocityIterations = 10
-    const positionIterations = 8
-    world.step(timeStep, velocityIterations, positionIterations)
-})
+  const timeStep = 1 / 60;
+  const velocityIterations = 10;
+  const positionIterations = 8;
+  world.step(timeStep, velocityIterations, positionIterations);
+});
 
 // load assets
-loadSprite("bean", "sprites/bean.png")
+loadSprite("bean", "sprites/bean.png");
 
 // add a character to screen
 const bean = add([
-    sprite("bean"),
-    anchor("center"),
-    pos(200, 40),
-    rotate(0),
-    rigidBody({ type: "dynamic", freezeRotation: true }),
-    circleCollider({ radius: 25, friction: 0.5 }),
-    //pointEffector({ forceMagnitude: -10000, forceMode: "inverseLinear", distanceScale: 0.1 }),
-])
+  sprite("bean"),
+  anchor("center"),
+  pos(200, 40),
+  rotate(0),
+  rigidBody({ type: "dynamic", freezeRotation: true }),
+  circleCollider({ radius: 25, friction: 0.5 }),
+  //pointEffector({ forceMagnitude: -10000, forceMode: "inverseLinear", distanceScale: 0.1 }),
+]);
 
 add([
-    rect(300, 40),
-    anchor("center"),
-    pos(200, 300),
-    rotate(0),
-    rigidBody({ type: "static" }),
-    collider({ friction: 0.5 }),
-    surfaceEffector({ speed: 100 }),
-])
+  rect(300, 40),
+  anchor("center"),
+  pos(200, 300),
+  rotate(0),
+  rigidBody({ type: "static" }),
+  collider({ friction: 0.5 }),
+  // surfaceEffector({ speed: 100 }),
+]);
 
 // add([
 //     rect(4, 4),
@@ -71,28 +70,28 @@ add([
 // ])
 
 loop(1, () => {
-    add([
-        sprite("bean"),
-        anchor("center"),
-        pos(rand(0, 400), 40),
-        rotate(0),
-        rigidBody({ type: "dynamic", freezeRotation: false }),
-        circleCollider({ radius: 25, friction: 0.5 }),
-        offscreen({ destroy: true })
-    ])
-})
+  add([
+    sprite("bean"),
+    anchor("center"),
+    pos(rand(0, 400), 40),
+    rotate(0),
+    rigidBody({ type: "dynamic", freezeRotation: false }),
+    circleCollider({ radius: 25, friction: 0.5 }),
+    offscreen({ destroy: true }),
+  ]);
+});
 
 onKeyPress("space", () => {
-    bean.jump(500)
-})
+  bean.jump(5000);
+});
 
 onKeyDown("right", () => {
-    bean.addForce(vec2(500, 0))
-})
+  bean.addForce(vec2(5000, 0));
+});
 
 onKeyDown("left", () => {
-    bean.addForce(vec2(-500, 0))
-})
+  bean.addForce(vec2(-5000, 0));
+});
 
 // onMousePress(() => {
 //     bean.use(targetJoint({ dampingRatio: 0.5, frequency: 5, maxForce: 10000 }))
@@ -105,6 +104,6 @@ onKeyDown("left", () => {
 //     }
 // })
 
-onMouseRelease(() => {
-    bean.unuse("targetJoint")
-})
+// onMouseRelease(() => {
+//   bean.unuse("targetJoint");
+// });
