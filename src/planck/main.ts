@@ -9,6 +9,8 @@ import { world, planckIntegration } from "./world";
 // initialize context
 kaplay({
   plugins: [planckIntegration],
+  debug: true,
+  debugKey: "i",
 });
 
 onUpdate(() => {
@@ -29,7 +31,7 @@ const bean = add([
   rotate(0),
   rigidBody({ type: "dynamic", freezeRotation: true }),
   circleCollider({ radius: 25, friction: 0.5 }),
-  //pointEffector({ forceMagnitude: -10000, forceMode: "inverseLinear", distanceScale: 0.1 }),
+//   pointEffector({ forceMagnitude: -10000, forceMode: "inverseLinear", distanceScale: 0.1 }),
 ]);
 
 add([
@@ -39,7 +41,7 @@ add([
   rotate(0),
   rigidBody({ type: "static" }),
   collider({ friction: 0.5 }),
-  // surfaceEffector({ speed: 100 }),
+//   surfaceEffector({ speed: 100 }),
 ]);
 
 // add([

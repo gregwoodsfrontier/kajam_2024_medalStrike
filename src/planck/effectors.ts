@@ -1,366 +1,397 @@
-import { Comp, GameObj } from "kaplay"
-import { Contact, Manifold, Vec2 as pV2 } from "planck"
-import { RigidBodyComp } from "./rigid_body"
-import { k2p } from "./world"
+import { Comp, GameObj } from "kaplay";
+import { Contact, Manifold, Vec2 as pV2 } from "planck";
+import { RigidBodyComp } from "./rigid_body";
+import { COLLISION_EVENTS, k2p } from "./world";
 
 export type AreaEffectorOpt = {
-    forceAngle?: number
-    forceMagnitude?: number
-    forceVariation?: number
-    linearDrag?: number
-    angularDrag?: number
-    //forceTarget: "collider" || "rigidbody"
-}
+  forceAngle?: number;
+  forceMagnitude?: number;
+  forceVariation?: number;
+  linearDrag?: number;
+  angularDrag?: number;
+  //forceTarget: "collider" || "rigidbody"
+};
 
 export interface AreaEffectorComp extends Comp {
-    forceAngle: number
-    forceMagnitude: number
-    forceVariation: number
-    linearDrag: number
-    angularDrag: number
+  forceAngle: number;
+  forceMagnitude: number;
+  forceVariation: number;
+  linearDrag: number;
+  angularDrag: number;
 }
 
 export function areaEffector(opt: AreaEffectorOpt): AreaEffectorComp {
-    let forceAngle = opt.forceAngle ?? 0
-    let forceMagnitude = opt.forceMagnitude ?? 0
-    let forceVariation = opt.forceVariation ?? 0
-    let linearDrag = opt.linearDrag ?? 0
-    let angularDrag = opt.angularDrag ?? 0
-    return {
-        id: "areaEffector",
-        require: ["rigidBody", "collider"],
-        add() {
-            this.on("collision_pre_solve", (other: GameObj<RigidBodyComp>, contact: Contact, oldManifold: Manifold) => {
-                const force = Vec2.fromAngle(forceAngle).scale(forceMagnitude + rand(-forceVariation, forceVariation))
-                other.addForce(force)
-            })
-        },
-        get forceAngle() {
-            return forceAngle
-        },
-        set forceAngle(value) {
-            forceAngle = value
-        },
-        get forceMagnitude() {
-            return forceMagnitude
-        },
-        set forceMagnitude(value) {
-            forceMagnitude = value
-        },
-        get forceVariation() {
-            return forceVariation
-        },
-        set forceVariation(value) {
-            forceVariation = value
-        },
-        get linearDrag() {
-            return linearDrag
-        },
-        set linearDrag(value) {
-            linearDrag = value
-        },
-        get angularDrag() {
-            return angularDrag
-        },
-        set angularDrag(value) {
-            angularDrag = value
+  let forceAngle = opt.forceAngle ?? 0;
+  let forceMagnitude = opt.forceMagnitude ?? 0;
+  let forceVariation = opt.forceVariation ?? 0;
+  let linearDrag = opt.linearDrag ?? 0;
+  let angularDrag = opt.angularDrag ?? 0;
+  return {
+    id: "areaEffector",
+    require: ["rigidBody", "collider"],
+    add() {
+      this.on(
+        COLLISION_EVENTS.PRE_SOLVE,
+        (
+          other: GameObj<RigidBodyComp>,
+          contact: Contact,
+          oldManifold: Manifold
+        ) => {
+          const force = Vec2.fromAngle(forceAngle).scale(
+            forceMagnitude + rand(-forceVariation, forceVariation)
+          );
+          other.addForce(force);
         }
-    }
+      );
+    },
+    get forceAngle() {
+      return forceAngle;
+    },
+    set forceAngle(value) {
+      forceAngle = value;
+    },
+    get forceMagnitude() {
+      return forceMagnitude;
+    },
+    set forceMagnitude(value) {
+      forceMagnitude = value;
+    },
+    get forceVariation() {
+      return forceVariation;
+    },
+    set forceVariation(value) {
+      forceVariation = value;
+    },
+    get linearDrag() {
+      return linearDrag;
+    },
+    set linearDrag(value) {
+      linearDrag = value;
+    },
+    get angularDrag() {
+      return angularDrag;
+    },
+    set angularDrag(value) {
+      angularDrag = value;
+    },
+  };
 }
 
 export type ConstantForceOpt = {
-    force: typeof Vec2
-    relativeForce: typeof Vec2
-    torque: number
-}
+  force: typeof Vec2;
+  relativeForce: typeof Vec2;
+  torque: number;
+};
 
 export interface ConstantForceComp extends Comp {
-    force?: typeof Vec2
-    relativeForce?: typeof Vec2
-    torque?: number
+  force?: typeof Vec2;
+  relativeForce?: typeof Vec2;
+  torque?: number;
 }
 
 export function constantForce(opt: ConstantForceOpt): ConstantForceComp {
-    let _force = opt.force
-    let _relativeForce = opt.relativeForce
-    let _torque = opt.torque
-    return {
-        id: "constantForce",
-        require: ["rigidBody"],
-        update() {
-            if (_force !== undefined) {
-                this.addForce(_force)
-            }
-            if (_torque !== undefined) {
-                this.addTorque(_torque)
-            }
-        },
-        get force() {
-            return _force
-        },
-        set force(value: typeof Vec2) {
-            _force = value
-        },
-        get relativeForce() {
-            return _relativeForce
-        },
-        set relativeForce(value: typeof Vec2) {
-            _relativeForce = value
-        },
-        get torque() {
-            return _torque
-        },
-        set torque(value: number) {
-            _torque = value
-        }
-    }
+  let _force = opt.force;
+  let _relativeForce = opt.relativeForce;
+  let _torque = opt.torque;
+  return {
+    id: "constantForce",
+    require: ["rigidBody"],
+    update() {
+      if (_force !== undefined) {
+        this.addForce(_force);
+      }
+      if (_torque !== undefined) {
+        this.addTorque(_torque);
+      }
+    },
+    get force() {
+      return _force;
+    },
+    set force(value: typeof Vec2) {
+      _force = value;
+    },
+    get relativeForce() {
+      return _relativeForce;
+    },
+    set relativeForce(value: typeof Vec2) {
+      _relativeForce = value;
+    },
+    get torque() {
+      return _torque;
+    },
+    set torque(value: number) {
+      _torque = value;
+    },
+  };
 }
 
-export type ForceMode = "constant" | "inverseLinear" | "inverseSquared"
+export type ForceMode = "constant" | "inverseLinear" | "inverseSquared";
 
 export type PointEffectorOpt = {
-    forceMagnitude: number
-    forceVariation?: number
-    distanceScale?: number
-    linearDrag?: number
-    angularDrag?: number
-    forceMode?: ForceMode
-}
+  forceMagnitude: number;
+  forceVariation?: number;
+  distanceScale?: number;
+  linearDrag?: number;
+  angularDrag?: number;
+  forceMode?: ForceMode;
+};
 
 export interface PointEffectorComp extends Comp {
-    forceMagnitude: number
-    forceVariation: number
-    distanceScale: number
-    effectorLinearDrag: number
-    effectorAngularDrag: number
-    forceMode: ForceMode
+  forceMagnitude: number;
+  forceVariation: number;
+  distanceScale: number;
+  effectorLinearDrag: number;
+  effectorAngularDrag: number;
+  forceMode: ForceMode;
 }
 
 export function pointEffector(opt: PointEffectorOpt): PointEffectorComp {
-    let forceMagnitude = opt.forceMagnitude ?? 0
-    let forceVariation = opt.forceVariation ?? 0
-    let distanceScale = opt.distanceScale || 1
-    let linearDrag = opt.linearDrag ?? 0
-    let angularDrag = opt.angularDrag ?? 0
-    let forceMode = opt.forceMode ?? "constant"
-    return {
-        id: "pointEffector",
-        require: ["rigidBody"],
-        update() {
-            get("rigidBody").forEach((rb) => {
-                if (rb !== this) {
-                    const v = rb.pos.sub(this.pos)
-                    const l = v.len()
-                    const d = l * distanceScale / 10
-                    const s = forceMode === "constant" ? 1 : forceMode === "inverseLinear" ? 1 / d : 1 / d ** 2
-                    rb.addForce(v.scale(forceMagnitude * s / l))
-                }
-            })
-        },
-        get forceMagnitude() {
-            return forceMagnitude
-        },
-        set forceMagnitude(value: number) {
-            forceMagnitude = value
-        },
-        get forceVariation() {
-            return forceVariation
-        },
-        set forceVariation(value: number) {
-            forceVariation = value
-        },
-        get distanceScale() {
-            return distanceScale
-        },
-        set distanceScale(value: number) {
-            distanceScale = value
-        },
-        get effectorLinearDrag() {
-            return linearDrag
-        },
-        set effectorLinearDrag(value: number) {
-            linearDrag = value
-        },
-        get effectorAngularDrag() {
-            return angularDrag
-        },
-        set effectorAngularDrag(value) {
-            angularDrag = value
-        },
-        get forceMode() {
-            return forceMode
-        },
-        set forceMode(value: ForceMode) {
-            forceMode = value
+  let forceMagnitude = opt.forceMagnitude ?? 0;
+  let forceVariation = opt.forceVariation ?? 0;
+  let distanceScale = opt.distanceScale || 1;
+  let linearDrag = opt.linearDrag ?? 0;
+  let angularDrag = opt.angularDrag ?? 0;
+  let forceMode = opt.forceMode ?? "constant";
+  return {
+    id: "pointEffector",
+    require: ["rigidBody"],
+    update() {
+      get("rigidBody").forEach((rb) => {
+        if (rb !== this) {
+          const v = rb.pos.sub(this.pos);
+          const l = v.len();
+          const d = (l * distanceScale) / 10;
+          const s =
+            forceMode === "constant"
+              ? 1
+              : forceMode === "inverseLinear"
+              ? 1 / d
+              : 1 / d ** 2;
+          rb.addForce(v.scale((forceMagnitude * s) / l));
         }
-    }
+      });
+    },
+    get forceMagnitude() {
+      return forceMagnitude;
+    },
+    set forceMagnitude(value: number) {
+      forceMagnitude = value;
+    },
+    get forceVariation() {
+      return forceVariation;
+    },
+    set forceVariation(value: number) {
+      forceVariation = value;
+    },
+    get distanceScale() {
+      return distanceScale;
+    },
+    set distanceScale(value: number) {
+      distanceScale = value;
+    },
+    get effectorLinearDrag() {
+      return linearDrag;
+    },
+    set effectorLinearDrag(value: number) {
+      linearDrag = value;
+    },
+    get effectorAngularDrag() {
+      return angularDrag;
+    },
+    set effectorAngularDrag(value) {
+      angularDrag = value;
+    },
+    get forceMode() {
+      return forceMode;
+    },
+    set forceMode(value: ForceMode) {
+      forceMode = value;
+    },
+  };
 }
 
 export type PlatformEffectorOpt = {
-    rotationalOffset?: number
-    sideArc?: number
-    surfaceArc?: number
-    useOneWay?: boolean
-    useOneWayGrouping?: boolean
-    useSideBounce?: boolean
-    useSideFriction?: boolean
-}
+  rotationalOffset?: number;
+  sideArc?: number;
+  surfaceArc?: number;
+  useOneWay?: boolean;
+  useOneWayGrouping?: boolean;
+  useSideBounce?: boolean;
+  useSideFriction?: boolean;
+};
 
 export interface PlatformEffectorComp extends Comp {
-    rotationalOffset: number
-    sideArc: number
-    surfaceArc: number
-    useOneWay: boolean
-    useOneWayGrouping: boolean
-    useSideBounce: boolean
-    useSideFriction: boolean
+  rotationalOffset: number;
+  sideArc: number;
+  surfaceArc: number;
+  useOneWay: boolean;
+  useOneWayGrouping: boolean;
+  useSideBounce: boolean;
+  useSideFriction: boolean;
 }
 
-export function platformEffector(opt: PlatformEffectorOpt): PlatformEffectorComp {
-    let rotationalOffset = opt.rotationalOffset ?? 0
-    let sideArc = opt.sideArc ?? 1
-    let surfaceArc = opt.surfaceArc ?? 180
-    let useOneWay = opt.useOneWay ?? false
-    let useOneWayGrouping = opt.useOneWay ?? false
-    let useSideBounce = opt.useSideBounce ?? false
-    let useSideFriction = opt.useSideFriction ?? false
-    return {
-        id: "platformEffector",
-        require: ["rigidBody", "collider"],
-        add() {
-            this.on("collision_pre_solve", (other: GameObj<RigidBodyComp>, contact: Contact, oldManifold: Manifold) => {
-                if (useOneWay) {
-                    const v = other.body.getLinearVelocity()
-                    const up = pV2(0, -1)
-                    const angle = rad2deg(Math.atan2(pV2.cross(v, up), pV2.dot(v, up)))
-                    if (Math.abs(angle) > surfaceArc / 2) {
-                        contact.setEnabled(false)
-                    }
-                }
-            })
-        },
-        get rotationalOffset() {
-            return rotationalOffset
-        },
-        set rotationalOffset(value: number) {
-            rotationalOffset = value
-
-        },
-        get sideArc() {
-            return sideArc
-        },
-        set sideArc(value: number) {
-            sideArc = value
-        },
-        get surfaceArc() {
-            return surfaceArc
-        },
-        set surfaceArc(value: number) {
-            surfaceArc = value
-        },
-        get useOneWay() {
-            return useOneWay
-        },
-        set useOneWay(value: boolean) {
-            useOneWay = value
-        },
-        get useOneWayGrouping() {
-            return useOneWayGrouping
-        },
-        set useOneWayGrouping(value: boolean) {
-            useOneWayGrouping = value
-        },
-        get useSideBounce() {
-            return useSideBounce
-        },
-        set useSideBounce(value: boolean) {
-            useSideBounce = value
-        },
-        get useSideFriction() {
-            return useSideFriction
-        },
-        set useSideFriction(value: boolean) {
-            useSideFriction = value
-        },
-    }
+export function platformEffector(
+  opt: PlatformEffectorOpt
+): PlatformEffectorComp {
+  let rotationalOffset = opt.rotationalOffset ?? 0;
+  let sideArc = opt.sideArc ?? 1;
+  let surfaceArc = opt.surfaceArc ?? 180;
+  let useOneWay = opt.useOneWay ?? false;
+  let useOneWayGrouping = opt.useOneWay ?? false;
+  let useSideBounce = opt.useSideBounce ?? false;
+  let useSideFriction = opt.useSideFriction ?? false;
+  return {
+    id: "platformEffector",
+    require: ["rigidBody", "collider"],
+    add() {
+      this.on(
+        COLLISION_EVENTS.PRE_SOLVE,
+        (
+          other: GameObj<RigidBodyComp>,
+          contact: Contact,
+          oldManifold: Manifold
+        ) => {
+          if (useOneWay) {
+            const v = other.body.getLinearVelocity();
+            const up = pV2(0, -1);
+            const angle = rad2deg(Math.atan2(pV2.cross(v, up), pV2.dot(v, up)));
+            if (Math.abs(angle) > surfaceArc / 2) {
+              contact.setEnabled(false);
+            }
+          }
+        }
+      );
+    },
+    get rotationalOffset() {
+      return rotationalOffset;
+    },
+    set rotationalOffset(value: number) {
+      rotationalOffset = value;
+    },
+    get sideArc() {
+      return sideArc;
+    },
+    set sideArc(value: number) {
+      sideArc = value;
+    },
+    get surfaceArc() {
+      return surfaceArc;
+    },
+    set surfaceArc(value: number) {
+      surfaceArc = value;
+    },
+    get useOneWay() {
+      return useOneWay;
+    },
+    set useOneWay(value: boolean) {
+      useOneWay = value;
+    },
+    get useOneWayGrouping() {
+      return useOneWayGrouping;
+    },
+    set useOneWayGrouping(value: boolean) {
+      useOneWayGrouping = value;
+    },
+    get useSideBounce() {
+      return useSideBounce;
+    },
+    set useSideBounce(value: boolean) {
+      useSideBounce = value;
+    },
+    get useSideFriction() {
+      return useSideFriction;
+    },
+    set useSideFriction(value: boolean) {
+      useSideFriction = value;
+    },
+  };
 }
 
 export type SurfaceEffectorOpt = {
-    forceScale?: number
-    speed?: number
-    speedVariation?: number
-    useBounce?: boolean
-    useContactForce?: boolean
-    useFriction?: boolean
-}
+  forceScale?: number;
+  speed?: number;
+  speedVariation?: number;
+  useBounce?: boolean;
+  useContactForce?: boolean;
+  useFriction?: boolean;
+};
 
 export interface SurfaceEffectorComp extends Comp {
-    forceScale: number
-    speed: number
-    speedVariation: number
-    useBounce: boolean
-    useContactForce?: boolean
-    useFriction?: boolean
+  forceScale: number;
+  speed: number;
+  speedVariation: number;
+  useBounce: boolean;
+  useContactForce?: boolean;
+  useFriction?: boolean;
 }
 
 export function surfaceEffector(opt: SurfaceEffectorOpt): SurfaceEffectorComp {
-    let forceScale = opt.forceScale ?? 1
-    let speed = (opt.speed ?? 1) / 10
-    let speedVariation = (opt.speedVariation ?? 0) / 10
-    let useBounce = opt.useBounce ?? true
-    let useContactForce = opt.useContactForce ?? true
-    let useFriction = opt.useFriction ?? true
-    return {
-        id: "surfaceEffector",
-        require: ["rigidBody", "collider"],
-        add() {
-            this.on("collision_pre_solve", (other: GameObj<RigidBodyComp>, contact: Contact, oldManifold: Manifold) => {
-                contact.setTangentSpeed(speed + (Math.random() - 0.5) * speedVariation)
-                if (!useBounce) {
-                    contact.setRestitution(0)
-                }
-                if (!useFriction) {
-                    contact.setFriction(0)
-                }
-            })
-        },
-        get forceScale() {
-            return forceScale
-        },
-        set forceScale(value: number) {
-            forceScale = value
-        },
-        get speed() {
-            return speed
-        },
-        set speed(value: number) {
-            speed = value
-        },
-        get speedVariation() {
-            return speedVariation
-        },
-        set speedVariation(value: number) {
-            speedVariation = value
-        },
-        get useBounce() {
-            return useBounce
-        },
-        set useBounce(value: boolean) {
-            useBounce = value
-        },
-        get useContactForce() {
-            return useContactForce
-        },
-        set useContactForce(value: boolean) {
-            useContactForce = value
-        },
-        get useFriction() {
-            return useFriction
-        },
-        set useFriction(value: boolean) {
-            useFriction = value
+  let forceScale = opt.forceScale ?? 1;
+  let speed = (opt.speed ?? 1) / 10;
+  let speedVariation = (opt.speedVariation ?? 0) / 10;
+  let useBounce = opt.useBounce ?? true;
+  let useContactForce = opt.useContactForce ?? true;
+  let useFriction = opt.useFriction ?? true;
+  return {
+    id: "surfaceEffector",
+    require: ["rigidBody", "collider"],
+    add() {
+      this.on(
+        COLLISION_EVENTS.PRE_SOLVE,
+        (
+          other: GameObj<RigidBodyComp>,
+          contact: Contact,
+          oldManifold: Manifold
+        ) => {
+          contact.setTangentSpeed(
+            speed + (Math.random() - 0.5) * speedVariation
+          );
+          if (!useBounce) {
+            contact.setRestitution(0);
+          }
+          if (!useFriction) {
+            contact.setFriction(0);
+          }
         }
-    }
+      );
+    },
+    get forceScale() {
+      return forceScale;
+    },
+    set forceScale(value: number) {
+      forceScale = value;
+    },
+    get speed() {
+      return speed;
+    },
+    set speed(value: number) {
+      speed = value;
+    },
+    get speedVariation() {
+      return speedVariation;
+    },
+    set speedVariation(value: number) {
+      speedVariation = value;
+    },
+    get useBounce() {
+      return useBounce;
+    },
+    set useBounce(value: boolean) {
+      useBounce = value;
+    },
+    get useContactForce() {
+      return useContactForce;
+    },
+    set useContactForce(value: boolean) {
+      useContactForce = value;
+    },
+    get useFriction() {
+      return useFriction;
+    },
+    set useFriction(value: boolean) {
+      useFriction = value;
+    },
+  };
 }
 
 /*

@@ -1,7 +1,8 @@
 import { GameObj, Comp, Vec2 as V2, PosComp, RotateComp } from "kaplay";
-import "kaplay/global";
+// import "kaplay/global";
+import { k } from "../kaplay";
 import { Vec2 as pV2, Body } from "planck";
-import { k2p, p2k, world } from "./world";
+import { COLLISION_EVENTS, k2p, p2k, world } from "./world";
 // import { deg2rad, rad2deg, vec2 } from "kaplay/dist/declaration/math"
 
 export type CollisiondetectionMode = "discrete" | "continuous";
@@ -85,7 +86,7 @@ export function rigidBody(opt: RigidBodyOpt): RigidBodyComp {
       _body = world.createBody({
         type: opt.type || "dynamic",
         position: k2p(this.pos),
-        angle: deg2rad(this.angle || 0),
+        angle: k.deg2rad(this.angle || 0),
         linearDamping: opt.linearDrag || 0,
         angularDamping: opt.angularDrag || 0,
         gravityScale: opt.gravityScale || 1,
@@ -99,7 +100,7 @@ export function rigidBody(opt: RigidBodyOpt): RigidBodyComp {
     },
     update() {
       this.pos = p2k(_body.getPosition());
-      this.angle = rad2deg(_body.getAngle());
+      this.angle = k.rad2deg(_body.getAngle());
     },
     /*draw() {
             drawRect({
@@ -252,13 +253,13 @@ export function rigidBody(opt: RigidBodyOpt): RigidBodyComp {
     },
     // Events
     onCollisionEnter(callback: CollissionCallback) {
-      this.on("collide_enter", callback);
+      this.on(COLLISION_EVENTS.ENTER, callback);
     },
     onCollisionStay(callback: CollissionCallback) {
-      this.on("collide_stay", callback);
+      this.on(COLLISION_EVENTS.STAY, callback);
     },
     onCollisionExit(callback: CollissionCallback) {
-      this.on("collide_exit", callback);
+      this.on(COLLISION_EVENTS.EXIT, callback);
     },
     // Kaboom
     jump(force: number) {

@@ -1,32 +1,37 @@
-import kaplay from "kaplay";
+import kaplay, { Vec2 } from "kaplay";
+import { k } from "./kaplay";
+import { rigidBody } from "./planck/rigid_body";
+import { circleCollider } from "./planck/collider";
+import { world } from "./planck/world";
 
-const k = kaplay({
-	global: false,
-	// width: 960,
-	// height: 640,
-	// stretch: true,
-	debug: true,
-	background:[0, 255, 255]
-})
+// const k = kaplay({
+//   global: false,
+//   // width: 960,
+//   // height: 640,
+//   // stretch: true,
+//   debug: true,
+//   background: [0, 255, 255],
+// });
 
-k.loadSprite("bean", "sprites/bean.png")
+k.loadSprite("bean", "sprites/bean.png");
 
 // custom comps start
 function slingLine() {
-    let isAreaPressed = false;
+  let isAreaPressed = false;
   return {
-    id: 'sling',
-    require: ['area', 'pos'],
-    add(){
-        k.onMousePress(() => {
+    id: "sling",
+    require: ["area", "pos", "rigidBody"],
+    add() {
+      k.onMousePress(() => {
         isAreaPressed = true;
       });
       k.onMouseRelease(() => {
-		//@ts-ignore
-        const v = this.pos.sub(k.mousePos());
+        //@ts-ignore
+        const v = this.pos.sub(k.mousePos()) as Vec2;
         const speed = v.len();
-		//@ts-ignore
-        this.use(k.move(v.scale(1/speed), speed));
+        //@ts-ignore
+        // this.use(k.move(v.scale(1 / speed), speed));
+        this.addForce(v.scale(1000));
         isAreaPressed = false;
       });
     },
@@ -34,7 +39,7 @@ function slingLine() {
       if (isAreaPressed) {
         k.drawLine({
           p1: k.vec2(0, 0),
-		  //@ts-ignore
+          //@ts-ignore
           p2: this.fromScreen(k.mousePos()),
           width: 14,
           color: k.rgb(0, 0, 255),
@@ -45,11 +50,11 @@ function slingLine() {
 }
 
 export function doubleSling(): any {
-    let isAreaPressed = false;
+  let isAreaPressed = false;
   return {
-    id: 'sling',
-    require: ['area', 'pos'],
-    
+    id: "sling",
+    require: ["area", "pos"],
+
     add() {
       k.onMousePress(() => {
         isAreaPressed = true;
@@ -57,7 +62,7 @@ export function doubleSling(): any {
       k.onMouseRelease(() => {
         const v = this.pos.sub(k.mousePos());
         const speed = v.len();
-        this.use(k.move(v.scale(1/speed), speed));
+        this.use(k.move(v.scale(1 / speed), speed));
         isAreaPressed = false;
       });
     },
@@ -69,54 +74,70 @@ export function doubleSling(): any {
           pts: [v.scale(32), p, v.scale(-32)],
           width: 14,
           color: k.rgb(0, 0, 255),
-          join: "round"
+          join: "round",
         });
       }
     },
   };
 }
 
-
 // custom function end
 
-
-
 k.scene("game", () => {
-	const enemy = []
+  k.onUpdate(() => {
+    const timeStep = 1 / 60;
+    const velocityIterations = 10;
+    const positionIterations = 8;
+    world.step(timeStep, velocityIterations, positionIterations);
+  });
 
-	const enemyCoords = [
-		{x: k.width()*0.35, y: k.height()*0.50},
-		{x: k.width()*0.55, y: k.height()*0.50},
-		{x: k.width()*0.45, y: k.height()*0.60}		
-	]
+  const enemy = [];
 
-	for(let i = 0; i < enemyCoords.length; i++) {
-		enemy.push(
-			k.add([
-				k.sprite("bean"),
-				k.color(255, 0, 255),
-				k.pos(enemyCoords[i].x, enemyCoords[i].y),
-				k.area(),
-				k.anchor("center")
-			])
-		)
-	}
-	
-})
+  const enemyCoords = [
+    { x: k.width() * 0.35, y: k.height() * 0.5 },
+    { x: k.width() * 0.55, y: k.height() * 0.5 },
+    { x: k.width() * 0.45, y: k.height() * 0.6 },
+  ];
+
+  for (let i = 0; i < enemyCoords.length; i++) {
+    enemy.push(
+      k.add([
+        k.sprite("bean"),
+        k.color(255, 0, 255),
+        k.pos(enemyCoords[i].x, enemyCoords[i].y),
+        k.area(),
+        k.anchor("center"),
+      ])
+    );
+  }
+});
 
 k.scene("test", () => {
-	const bean = k.add([
-		k.pos(120, 80),
-		k.sprite("bean"),
-		k.anchor("center"),
-		k.area(),
-		doubleSling()
-	])
+  k.onUpdate(() => {
+    const timeStep = 1 / 60;
+    const velocityIterations = 10;
+    const positionIterations = 8;
+    world.step(timeStep, velocityIterations, positionIterations);
+  });
 
-})
+  const bean = k.add([
+    k.pos(500, 500),
+    k.sprite("bean"),
+    k.anchor("center"),
+    k.area(),
+    k.rotate(0),
+    rigidBody({
+      type: "dynamic",
+      freezeRotation: true,
+      gravityScale: 0.5,
+    }),
+    circleCollider({ radius: 25, friction: 0.5 }),
+    // doubleSling()
+    slingLine(),
+  ]);
+});
 
-k.debug.inspect = true
+k.debug.inspect = true;
 
 // k.go("test")
-k.go("test")
-
+k.go("test");
