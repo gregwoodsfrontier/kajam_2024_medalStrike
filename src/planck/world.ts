@@ -1,5 +1,5 @@
-import { Vec2 as kV2 } from "kaplay";
-import {k} from "../kaplay";
+import { KAPLAYCtx, Vec2 as kV2 } from "kaplay";
+import { k } from "../kaplay";
 import { World, Vec2 as pV2, Contact, Manifold } from "planck";
 
 export enum COLLISION_EVENTS {
@@ -36,7 +36,7 @@ world.on("end-contact", function (contact) {
   bodyB.trigger(COLLISION_EVENTS.EXIT, bodyA);
 });
 
-export function planckIntegration() {
+export function planckIntegration(k: KAPLAYCtx) {
   world.on("pre-solve", function (contact, oldManifold) {
     const bodyA = contact.getFixtureA().getBody().getUserData() as any;
     const bodyB = contact.getFixtureB().getBody().getUserData() as any;

@@ -10,5 +10,5 @@ export const k = kaplay({
   // stretch: true,
   debug: true,
   background: [0, 255, 255],
-  plugins: [planckIntegration],
+  //   plugins: [planckIntegration],
 });

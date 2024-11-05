@@ -1,5 +1,6 @@
 import kaplay, { Vec2 } from "kaplay";
 import { k } from "./kaplay";
+import { Vec2 as pV2 } from "planck";
 import { rigidBody } from "./planck/rigid_body";
 import { circleCollider } from "./planck/collider";
 import { world } from "./planck/world";
@@ -113,6 +114,7 @@ k.scene("game", () => {
 });
 
 k.scene("test", () => {
+  world.setGravity(pV2(0, 0));
   k.onUpdate(() => {
     const timeStep = 1 / 60;
     const velocityIterations = 10;
@@ -129,11 +131,27 @@ k.scene("test", () => {
     rigidBody({
       type: "dynamic",
       freezeRotation: true,
-      gravityScale: 0.5,
+      gravityScale: 0,
+      linearDrag: 1.0,
     }),
     circleCollider({ radius: 25, friction: 0.5 }),
     // doubleSling()
     slingLine(),
+  ]);
+
+  k.add([
+    k.pos(1000, 500),
+    k.sprite("bean"),
+    k.anchor("center"),
+    k.area(),
+    k.rotate(0),
+    rigidBody({
+      type: "dynamic",
+      freezeRotation: true,
+      gravityScale: 0,
+      linearDrag: 0.5,
+    }),
+    circleCollider({ radius: 25, friction: 0.5 }),
   ]);
 });
 
