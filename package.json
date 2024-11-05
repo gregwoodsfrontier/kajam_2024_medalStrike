@@ -1,0 +1,19 @@
+{
+	"name": "medalStr",
+	"type": "module",
+	"scripts": {
+		"start": "vite --mode dev",
+		"dev": "vite --mode dev",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"zip": "npm run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\""
+	},
+	"dependencies": {
+		"kaplay": "^3001.0.2",
+		"planck": "^1.0.6"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.2",
+		"vite": "^5.4.10"
+	}
+}
