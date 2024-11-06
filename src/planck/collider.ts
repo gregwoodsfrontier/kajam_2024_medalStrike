@@ -173,6 +173,7 @@ export function polygonCollider(opt: PolygonColliderOpt) {
 }
 
 export type EdgeColliderOpt = ColliderOpt & {
+  isLoop?: boolean;
   offset?: V2;
   points: V2[];
 };
@@ -184,7 +185,7 @@ export function edgeCollider(opt: EdgeColliderOpt) {
     require: ["rigidBody"],
     add() {
       _fixture = this.body.createFixture({
-        shape: new ChainShape(opt.points.map((p) => k2p(p))),
+        shape: new ChainShape(opt.points.map((p) => k2p(p)), opt.isLoop || false),
         density: 1,
         friction: opt.friction || 0,
         restitution: opt.bounciness || 0,

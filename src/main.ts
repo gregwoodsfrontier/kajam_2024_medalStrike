@@ -2,8 +2,9 @@ import kaplay, { Vec2 } from "kaplay";
 import { k } from "./kaplay";
 import { Vec2 as pV2 } from "planck";
 import { rigidBody } from "./planck/rigid_body";
-import { circleCollider } from "./planck/collider";
-import { world } from "./planck/world";
+import { circleCollider, edgeCollider, polygonCollider } from "./planck/collider";
+import { k2p, world } from "./planck/world";
+import { createGameScene } from "./game-scene";
 
 // const k = kaplay({
 //   global: false,
@@ -84,37 +85,35 @@ export function doubleSling(): any {
 
 // custom function end
 
-k.scene("game", () => {
-  k.onUpdate(() => {
-    const timeStep = 1 / 60;
-    const velocityIterations = 10;
-    const positionIterations = 8;
-    world.step(timeStep, velocityIterations, positionIterations);
-  });
-
-  const enemy = [];
-
-  const enemyCoords = [
-    { x: k.width() * 0.35, y: k.height() * 0.5 },
-    { x: k.width() * 0.55, y: k.height() * 0.5 },
-    { x: k.width() * 0.45, y: k.height() * 0.6 },
-  ];
-
-  for (let i = 0; i < enemyCoords.length; i++) {
-    enemy.push(
-      k.add([
-        k.sprite("bean"),
-        k.color(255, 0, 255),
-        k.pos(enemyCoords[i].x, enemyCoords[i].y),
-        k.area(),
-        k.anchor("center"),
-      ])
-    );
-  }
-});
+k.scene("game", createGameScene)
 
 k.scene("test", () => {
+  const borderPoints = [] as Vec2[]
+  for (let i = 0; i < 8; i++) {
+    const R = 250
+    const v = k.vec2(R * Math.cos(k.deg2rad(22.5 + 45 * i)), R * Math.sin(k.deg2rad(22.5+45 * i)))
+    borderPoints.push(v)
+  }
+
+  k.add([
+    k.pos(k.width()/2, k.height()/2),
+    k.polygon(borderPoints),
+    k.outline(5, k.rgb(255, 0, 0)),
+    "wall",
+    k.rotate(),
+    rigidBody({
+      type: "static",
+      freezeRotation: true,
+    }),
+    edgeCollider({
+      points: borderPoints,
+      bounciness: 1.0,
+      isLoop: true
+    })
+  ])
+
   world.setGravity(pV2(0, 0));
+
   k.onUpdate(() => {
     const timeStep = 1 / 60;
     const velocityIterations = 10;
@@ -123,7 +122,7 @@ k.scene("test", () => {
   });
 
   const bean = k.add([
-    k.pos(500, 500),
+    k.pos(500, 400),
     k.sprite("bean"),
     k.anchor("center"),
     k.area(),
@@ -134,28 +133,28 @@ k.scene("test", () => {
       gravityScale: 0,
       linearDrag: 1.0,
     }),
-    circleCollider({ radius: 25, friction: 0.5 }),
+    circleCollider({ radius: 25, friction: 0.5, bounciness: 1.0 }),
     // doubleSling()
     slingLine(),
+    "player"
   ]);
 
+
+
   k.add([
-    k.pos(1000, 500),
+    k.pos(k.width()/2, k.height()/2),
     k.sprite("bean"),
     k.anchor("center"),
     k.area(),
     k.rotate(0),
     rigidBody({
       type: "dynamic",
-      freezeRotation: true,
       gravityScale: 0,
       linearDrag: 0.5,
     }),
-    circleCollider({ radius: 25, friction: 0.5 }),
+    circleCollider({ radius: 25, friction: 0.5, bounciness: 1.0 }),
   ]);
 });
 
-k.debug.inspect = true;
-
-// k.go("test")
-k.go("test");
+k.go("test")
+// k.go("game");
