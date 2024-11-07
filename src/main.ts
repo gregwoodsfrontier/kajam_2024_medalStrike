@@ -2,18 +2,13 @@ import kaplay, { AreaComp, KAPLAYCtx, PosComp, Vec2 } from "kaplay";
 import { k } from "./kaplay";
 import { Vec2 as pV2, World } from "planck";
 import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
-import { circleCollider, edgeCollider, polygonCollider } from "./planck/collider";
+import {
+  circleCollider,
+  edgeCollider,
+  polygonCollider,
+} from "./planck/collider";
 import { k2p, world } from "./planck/world";
-import { createGameScene } from "./game-scene";
-
-// const k = kaplay({
-//   global: false,
-//   // width: 960,
-//   // height: 640,
-//   // stretch: true,
-//   debug: true,
-//   background: [0, 255, 255],
-// });
+// import { createGameScene } from "./game-scene";
 
 k.loadSprite("bean", "sprites/bean.png");
 
@@ -36,14 +31,12 @@ function slingLine(_opt: SlingLineOpt) {
       k.onMouseRelease(() => {
         if (isAreaPressed == true) {
           const v = (this as PosComp).pos.sub(k.mousePos());
-          //@ts-ignore
-          // this.use(k.move(v.scale(1 / speed), speed));
           let speed = _opt.speed || 1;
-          console.log(speed);
+          console.log(v.scale(speed));
+
           (this as RigidBodyComp).addForce(v.scale(speed));
           isAreaPressed = false;
         }
-        
       });
     },
     draw() {
@@ -95,18 +88,53 @@ function createPlayer(_k: KAPLAYCtx, _posx: number, _posy: number) {
 
 // custom function end
 
-k.scene("game", createGameScene)
+k.scene("game", () => {
+  k.onUpdate(() => {
+    setPlanckWorld(world);
+  });
+
+  const enemyCoords = [
+    { x: k.width() * 0.35, y: k.height() * 0.5 },
+    { x: k.width() * 0.55, y: k.height() * 0.5 },
+    { x: k.width() * 0.45, y: k.height() * 0.6 },
+  ];
+
+  for (let i = 0; i < enemyCoords.length; i++) {
+    k.add([
+      k.sprite("bean"),
+      k.color(255, 0, 255),
+      k.pos(enemyCoords[i].x, enemyCoords[i].y),
+      k.area(),
+      k.anchor("center"),
+      k.rotate(0),
+      rigidBody({
+        type: "dynamic",
+        gravityScale: 0,
+        linearDrag: 0.5,
+        angularDrag: 0.8,
+      }),
+      circleCollider({ radius: 25, friction: 0.5, bounciness: 0.8 }),
+      "enemy",
+    ]);
+  }
+
+  createPlayer(k, k.width() / 2, k.height() / 2);
+});
 
 k.scene("test", () => {
-  const borderPoints = [] as Vec2[]
+  // setPlanckWorld(world);
+  const borderPoints = [] as Vec2[];
   for (let i = 0; i < 8; i++) {
-    const R = 250
-    const v = k.vec2(R * Math.cos(k.deg2rad(22.5 + 45 * i)), R * Math.sin(k.deg2rad(22.5+45 * i)))
-    borderPoints.push(v)
+    const R = 250;
+    const v = k.vec2(
+      R * Math.cos(k.deg2rad(22.5 + 45 * i)),
+      R * Math.sin(k.deg2rad(22.5 + 45 * i))
+    );
+    borderPoints.push(v);
   }
 
   k.add([
-    k.pos(k.width()/2, k.height()/2),
+    k.pos(k.width() / 2, k.height() / 2),
     k.polygon(borderPoints),
     k.outline(5, k.rgb(255, 0, 0)),
     "wall",
@@ -118,9 +146,9 @@ k.scene("test", () => {
     edgeCollider({
       points: borderPoints,
       bounciness: 1.0,
-      isLoop: true
-    })
-  ])
+      isLoop: true,
+    }),
+  ]);
 
   world.setGravity(pV2(0, 0));
 
@@ -146,15 +174,13 @@ k.scene("test", () => {
     circleCollider({ radius: 25, friction: 0.5, bounciness: 1.0 }),
     // doubleSling()
     slingLine({
-      speed: 1000
+      speed: 1000,
     }),
-    "player"
+    "player",
   ]);
 
-
-
   k.add([
-    k.pos(k.width()/2, k.height()/2),
+    k.pos(k.width() / 2, k.height() / 2),
     k.sprite("bean"),
     k.anchor("center"),
     k.area(),
@@ -168,5 +194,5 @@ k.scene("test", () => {
   ]);
 });
 
-// k.go("test")
+// k.go("test");
 k.go("game");
