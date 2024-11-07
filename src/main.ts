@@ -168,5 +168,5 @@ k.scene("test", () => {
   ]);
 });
 
-k.go("test")
-// k.go("game");
+// k.go("test")
+k.go("game");
