@@ -1,7 +1,7 @@
 import kaplay, { AreaComp, KAPLAYCtx, PosComp, Vec2 } from "kaplay";
 import { k } from "./kaplay";
 import { Vec2 as pV2 } from "planck";
-import { rigidBody } from "./planck/rigid_body";
+import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
 import { circleCollider, edgeCollider, polygonCollider } from "./planck/collider";
 import { k2p, world } from "./planck/world";
 import { createGameScene } from "./game-scene";
