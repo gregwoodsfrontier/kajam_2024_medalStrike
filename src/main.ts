@@ -1,6 +1,6 @@
 import kaplay, { AreaComp, KAPLAYCtx, PosComp, Vec2 } from "kaplay";
 import { k } from "./kaplay";
-import { Vec2 as pV2 } from "planck";
+import { Vec2 as pV2, World } from "planck";
 import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
 import { circleCollider, edgeCollider, polygonCollider } from "./planck/collider";
 import { k2p, world } from "./planck/world";
@@ -145,7 +145,9 @@ k.scene("test", () => {
     }),
     circleCollider({ radius: 25, friction: 0.5, bounciness: 1.0 }),
     // doubleSling()
-    slingLine(),
+    slingLine({
+      speed: 1000
+    }),
     "player"
   ]);
 
