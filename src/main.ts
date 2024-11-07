@@ -1,4 +1,4 @@
-import kaplay, { Vec2 } from "kaplay";
+import kaplay, { AreaComp, KAPLAYCtx, PosComp, Vec2 } from "kaplay";
 import { k } from "./kaplay";
 import { Vec2 as pV2 } from "planck";
 import { rigidBody } from "./planck/rigid_body";
@@ -17,24 +17,33 @@ import { createGameScene } from "./game-scene";
 
 k.loadSprite("bean", "sprites/bean.png");
 
+export type SlingLineOpt = {
+  speed: number;
+};
+
 // custom comps start
-function slingLine() {
+function slingLine(_opt: SlingLineOpt) {
   let isAreaPressed = false;
   return {
     id: "sling",
     require: ["area", "pos", "rigidBody"],
     add() {
       k.onMousePress(() => {
-        isAreaPressed = true;
+        if ((this as AreaComp).isHovering()) {
+          isAreaPressed = true;
+        }
       });
       k.onMouseRelease(() => {
-        //@ts-ignore
-        const v = this.pos.sub(k.mousePos()) as Vec2;
-        const speed = v.len();
-        //@ts-ignore
-        // this.use(k.move(v.scale(1 / speed), speed));
-        this.addForce(v.scale(1000));
-        isAreaPressed = false;
+        if (isAreaPressed == true) {
+          const v = (this as PosComp).pos.sub(k.mousePos());
+          //@ts-ignore
+          // this.use(k.move(v.scale(1 / speed), speed));
+          let speed = _opt.speed || 1;
+          console.log(speed);
+          (this as RigidBodyComp).addForce(v.scale(speed));
+          isAreaPressed = false;
+        }
+        
       });
     },
     draw() {
@@ -51,36 +60,37 @@ function slingLine() {
   };
 }
 
-export function doubleSling(): any {
-  let isAreaPressed = false;
-  return {
-    id: "sling",
-    require: ["area", "pos"],
+function setPlanckWorld(_world: World) {
+  const timeStep = 1 / 60;
+  const velocityIterations = 10;
+  const positionIterations = 8;
+  _world.setGravity(pV2(0, 0));
+  _world.step(timeStep, velocityIterations, positionIterations);
+}
 
-    add() {
-      k.onMousePress(() => {
-        isAreaPressed = true;
-      });
-      k.onMouseRelease(() => {
-        const v = this.pos.sub(k.mousePos());
-        const speed = v.len();
-        this.use(k.move(v.scale(1 / speed), speed));
-        isAreaPressed = false;
-      });
-    },
-    draw() {
-      if (isAreaPressed) {
-        const v = this.pos.sub(k.mousePos()).normal().unit();
-        const p = this.fromScreen(k.mousePos());
-        k.drawLines({
-          pts: [v.scale(32), p, v.scale(-32)],
-          width: 14,
-          color: k.rgb(0, 0, 255),
-          join: "round",
-        });
-      }
-    },
-  };
+function createPlayer(_k: KAPLAYCtx, _posx: number, _posy: number) {
+  _k.add([
+    _k.pos(_posx, _posy),
+    _k.sprite("bean"),
+    _k.anchor("center"),
+    _k.area(),
+    _k.rotate(0),
+    rigidBody({
+      type: "dynamic",
+      freezeRotation: true,
+      gravityScale: 0,
+      linearDrag: 0.5,
+    }),
+    circleCollider({
+      radius: 25,
+      friction: 0.5,
+      bounciness: 0.8,
+    }),
+    slingLine({
+      speed: 1000,
+    }),
+    "player",
+  ]);
 }
 
 // custom function end
