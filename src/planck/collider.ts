@@ -9,6 +9,7 @@ import {
   Fixture,
 } from "planck";
 import { k2p, p2k } from "./world";
+import { RigidBodyComp } from "./rigid_body";
 
 export type ColliderOpt = {
   friction?: number;
@@ -16,7 +17,7 @@ export type ColliderOpt = {
   isTrigger?: boolean;
 };
 
-export function collider(opt: ColliderOpt) {
+export function collider(this: RigidBodyComp, opt: ColliderOpt) {
   let _fixture: Fixture;
   return {
     id: "collider",
@@ -94,7 +95,7 @@ export type CircleColliderOpt = ColliderOpt & {
   radius: number;
 };
 
-export function circleCollider(opt: CircleColliderOpt) {
+export function circleCollider(this: RigidBodyComp, opt: CircleColliderOpt) {
   let _fixture: Fixture;
   return {
     id: "circleCollider",
@@ -112,6 +113,7 @@ export function circleCollider(opt: CircleColliderOpt) {
       });
     },
     destroy() {
+      console.log("collider destroy")
       this.body.destroyFixture(_fixture);
     },
   };

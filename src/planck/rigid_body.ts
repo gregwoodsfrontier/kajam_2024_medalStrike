@@ -96,6 +96,7 @@ export function rigidBody(opt: RigidBodyOpt): RigidBodyComp {
       });
     },
     destroy() {
+      console.log("rigid body destroy")
       world.destroyBody(_body);
     },
     update() {
