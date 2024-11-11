@@ -1,4 +1,4 @@
-import { Vec2 as V2 } from "kaplay";
+import { RectComp, SpriteComp, Vec2 as V2 } from "kaplay";
 import {
   Box,
   CircleShape,
@@ -17,7 +17,7 @@ export type ColliderOpt = {
   isTrigger?: boolean;
 };
 
-export function collider(this: RigidBodyComp, opt: ColliderOpt) {
+export function collider(this: RigidBodyComp|SpriteComp|RectComp, opt: ColliderOpt) {
   let _fixture: Fixture;
   return {
     id: "collider",
@@ -95,7 +95,7 @@ export type CircleColliderOpt = ColliderOpt & {
   radius: number;
 };
 
-export function circleCollider(this: RigidBodyComp, opt: CircleColliderOpt) {
+export function circleCollider(opt: CircleColliderOpt) {
   let _fixture: Fixture;
   return {
     id: "circleCollider",
@@ -113,7 +113,7 @@ export function circleCollider(this: RigidBodyComp, opt: CircleColliderOpt) {
       });
     },
     destroy() {
-      console.log("collider destroy")
+      console.log("collider destroy");
       this.body.destroyFixture(_fixture);
     },
   };
@@ -187,7 +187,10 @@ export function edgeCollider(opt: EdgeColliderOpt) {
     require: ["rigidBody"],
     add() {
       _fixture = this.body.createFixture({
-        shape: new ChainShape(opt.points.map((p) => k2p(p)), opt.isLoop || false),
+        shape: new ChainShape(
+          opt.points.map((p) => k2p(p)),
+          opt.isLoop || false
+        ),
         density: 1,
         friction: opt.friction || 0,
         restitution: opt.bounciness || 0,
