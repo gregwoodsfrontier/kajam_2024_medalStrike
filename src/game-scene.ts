@@ -1,8 +1,8 @@
 import { k } from "./kaplay";
 import { Vec2 as pV2, World } from "planck";
-import { world } from "./planck/world";
-import { GameObj, KAPLAYCtx, SpriteComp } from "kaplay";
-import { rigidBody } from "./planck/rigid_body";
+import { p2k, world } from "./planck/world";
+import { Game, GameObj, KAPLAYCtx, SpriteComp, TweenController } from "kaplay";
+import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
 import { circleCollider, edgeCollider } from "./planck/collider";
 import { slingLine } from "./comps/slingLine";
 
@@ -19,7 +19,7 @@ export function createPlayer(
   _posx: number,
   _posy: number
 ): void {
-  _k.add([
+  const p = _k.add([
     _k.pos(_posx, _posy),
     _k.sprite("bean"),
     _k.anchor("center"),
@@ -41,10 +41,11 @@ export function createPlayer(
     }),
     "player",
   ]);
+  p.filterGroupIdx = 1
 }
 
 export function createEnemy(_k: KAPLAYCtx, _posx: number, _posy: number): void {
-  _k.add([
+  const e = _k.add([
     _k.sprite("bean"),
     _k.color(255, 0, 255),
     _k.pos(_posx, _posy),
@@ -64,6 +65,7 @@ export function createEnemy(_k: KAPLAYCtx, _posx: number, _posy: number): void {
     }),
     "enemy",
   ]);
+  e.filterGroupIdx = 1
 }
 
 export function createBounds(_k: KAPLAYCtx, _width: number, _height: number) {
@@ -91,37 +93,47 @@ export function createBounds(_k: KAPLAYCtx, _width: number, _height: number) {
 }
 
 export const createGameScene = () => {
+  function createTween(_obj: GameObj) {
+    const tw = k.tween(1, 0.5, 1, (v) => {
+      _obj.scale = k.vec2(v, v)
+    })
+    
+    return tw
+  }
+
+  let currTw: TweenController | undefined = undefined
+
   k.onUpdate(() => {
     setPlanckWorld(world);
 
     k.get("QDestroy").forEach((obj: GameObj) => {
-      const cloneSprite = k.add([
-        k.sprite(obj.sprite),
-        k.pos(obj.pos),
-        k.rotate(k.angle),
-      ]);
+      if(obj.is("circleCollider")) {
+        obj.filterGroupIdx = -1
+      } else {
+        console.error("No circle collider for this obj")
+      }
 
-      console.log(cloneSprite);
+      if(obj.is("rigidBody")) {
+        obj.linearDrag = 7
+      } else {
+        console.error("No rigidBody for this obj")
+      }
 
-      obj.unuse("QDestroy");
+      obj.angularVelocity = 2
+      obj.use("scale")
+      if(currTw) return
+      currTw = createTween(obj)
+      currTw.onEnd(() => {
+        console.log("despawn bean here")
+        obj.destroy()
+        currTw = undefined
+      })
+
+      // k.wait(0.75, () => {
+      //   console.log("despawn bean here")
+      //   // obj.destroy()
+      // })
     });
-  });
-
-  k.on("onOutBounds", "rigidBody", (_obj: GameObj) => {
-    console.log("char falls into pit");
-    console.log(world.getBodyList());
-
-    k.destroy(_obj);
-
-    // if(_obj.is("circleCollider")) {
-    //   _obj.unuse("circleCollider")
-    // }
-
-    // if(_obj.is("rigidBody")) {
-    //   _obj.unuse("rigidBody")
-    // }
-
-    console.log(world.getBodyCount());
   });
 
   createBounds(k, 1024, 512);

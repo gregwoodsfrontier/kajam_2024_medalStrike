@@ -48,13 +48,7 @@ export function collider(this: RigidBodyComp|SpriteComp|RectComp, opt: ColliderO
       this.body.destroyFixture(_fixture);
     },
 
-    set filterGroupIdx(index: number) {
-      _fixture.setFilterGroupIndex(index)
-    },
-
-    get filterGroupIdx() {
-      return _fixture.getFilterGroupIndex()
-    }
+    
     /*draw() {
       if (!_fixture) return;
       let shape = _fixture.getShape();
@@ -124,6 +118,13 @@ export function circleCollider(opt: CircleColliderOpt) {
       console.log("collider destroy");
       this.body.destroyFixture(_fixture);
     },
+    set filterGroupIdx(index: number) {
+      _fixture.setFilterGroupIndex(index)
+    },
+
+    get filterGroupIdx() {
+      return _fixture.getFilterGroupIndex()
+    }
   };
 }
 
