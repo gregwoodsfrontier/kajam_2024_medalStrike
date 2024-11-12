@@ -1,4 +1,11 @@
-import kaplay, { AreaComp, FixedComp, GameObj, KAPLAYCtx, PosComp, Vec2 } from "kaplay";
+import kaplay, {
+  AreaComp,
+  FixedComp,
+  GameObj,
+  KAPLAYCtx,
+  PosComp,
+  Vec2,
+} from "kaplay";
 import { k } from "./kaplay";
 import { Vec2 as pV2, World } from "planck";
 import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
@@ -13,6 +20,11 @@ import { createGameOverScene, GAME_OVER_SCENE_KEY } from "./game-over-scene";
 // import { createGameScene } from "./game-scene";
 
 k.loadSprite("bean", "sprites/bean.png");
+k.loadSprite("skuller", "./sprites/skuller.png");
+k.loadSprite("skuller-o", "./sprites/skuller-o.png");
+k.loadSprite("pointer", "./sprites/pointer.png");
+k.loadSprite("pointer-o", "./sprites/pointer-o.png");
+k.loadSprite("tomb", "./sprites/tomb.png");
 
 export type SlingLineOpt = {
   speed: number;
@@ -24,7 +36,7 @@ function slingLine(_opt: SlingLineOpt) {
   return {
     id: "sling",
     require: ["area", "pos", "rigidBody"],
-    add(this:GameObj<AreaComp|PosComp|RigidBodyComp>) {
+    add(this: GameObj<AreaComp | PosComp | RigidBodyComp>) {
       k.onMousePress(() => {
         if (this.isHovering()) {
           isAreaPressed = true;
@@ -40,7 +52,7 @@ function slingLine(_opt: SlingLineOpt) {
         }
       });
     },
-    draw(this:GameObj<PosComp|FixedComp>) {
+    draw(this: GameObj<PosComp | FixedComp>) {
       if (isAreaPressed) {
         k.drawLine({
           p1: k.vec2(0, 0),
@@ -88,29 +100,31 @@ function createPlayer(_k: KAPLAYCtx, _posx: number, _posy: number): void {
 
 function createBounds(_k: KAPLAYCtx, _width: number, _height: number) {
   const points = [
-    _k.vec2(0,0), _k.vec2(_width,0),
-    _k.vec2(_width,_height), _k.vec2(0,_height)
-  ]
+    _k.vec2(0, 0),
+    _k.vec2(_width, 0),
+    _k.vec2(_width, _height),
+    _k.vec2(0, _height),
+  ];
   _k.add([
     _k.polygon(points),
     _k.outline(4, _k.rgb(255, 0, 255)),
     _k.color(255, 255, 10),
-    _k.pos(_k.width()/2 - _width/2, _k.height()/2 - _height/2),
+    _k.pos(_k.width() / 2 - _width / 2, _k.height() / 2 - _height / 2),
     _k.rotate(0),
     rigidBody({
-      type:"static"
+      type: "static",
     }),
     edgeCollider({
       points: points,
       bounciness: 0.2,
-      isLoop: true
-    })
-  ])
+      isLoop: true,
+    }),
+  ]);
 }
 
 // custom function end
 k.scene("game", createGameScene);
-k.scene(GAME_OVER_SCENE_KEY, createGameOverScene)
+k.scene(GAME_OVER_SCENE_KEY, createGameOverScene);
 
 k.scene("test", () => {
   // setPlanckWorld(world);

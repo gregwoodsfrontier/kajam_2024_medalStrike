@@ -5,6 +5,7 @@ import { Game, GameObj, KAPLAYCtx, SpriteComp, TweenController } from "kaplay";
 import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
 import { circleCollider, edgeCollider } from "./planck/collider";
 import { slingLine } from "./comps/slingLine";
+import { createPlayer } from "./prefabs/player";
 
 export function setPlanckWorld(_world: World) {
   const timeStep = 1 / 60;
@@ -14,35 +15,7 @@ export function setPlanckWorld(_world: World) {
   _world.step(timeStep, velocityIterations, positionIterations);
 }
 
-export function createPlayer(
-  _k: KAPLAYCtx,
-  _posx: number,
-  _posy: number
-): void {
-  const p = _k.add([
-    _k.pos(_posx, _posy),
-    _k.sprite("bean"),
-    _k.anchor("center"),
-    _k.area(),
-    _k.rotate(0),
-    rigidBody({
-      type: "dynamic",
-      freezeRotation: true,
-      gravityScale: 0,
-      linearDrag: 0.5,
-    }),
-    circleCollider({
-      radius: 25,
-      friction: 0.5,
-      bounciness: 0.8,
-    }),
-    slingLine({
-      speed: 5000,
-    }),
-    "player",
-  ]);
-  p.filterGroupIdx = 1
-}
+
 
 export function createEnemy(_k: KAPLAYCtx, _posx: number, _posy: number): void {
   const e = _k.add([

@@ -21,7 +21,7 @@ onUpdate(() => {
 });
 
 // load assets
-loadSprite("bean", "sprites/bean.png");
+loadSprite("bean", "./sprites/bean.png");
 
 // add a character to screen
 const bean = add([

@@ -1,4 +1,4 @@
-import { RectComp, SpriteComp, Vec2 as V2 } from "kaplay";
+import { Comp, RectComp, SpriteComp, Vec2 as V2 } from "kaplay";
 import {
   Box,
   CircleShape,
@@ -10,6 +10,7 @@ import {
 } from "planck";
 import { k2p, p2k } from "./world";
 import { RigidBodyComp } from "./rigid_body";
+import { k } from "../kaplay";
 
 export type ColliderOpt = {
   friction?: number;
@@ -17,7 +18,10 @@ export type ColliderOpt = {
   isTrigger?: boolean;
 };
 
-export function collider(this: RigidBodyComp|SpriteComp|RectComp, opt: ColliderOpt) {
+export function collider(
+  this: RigidBodyComp | SpriteComp | RectComp,
+  opt: ColliderOpt
+) {
   let _fixture: Fixture;
   return {
     id: "collider",
@@ -48,7 +52,6 @@ export function collider(this: RigidBodyComp|SpriteComp|RectComp, opt: ColliderO
       this.body.destroyFixture(_fixture);
     },
 
-    
     /*draw() {
       if (!_fixture) return;
       let shape = _fixture.getShape();
@@ -97,6 +100,10 @@ export type CircleColliderOpt = ColliderOpt & {
   radius: number;
 };
 
+export interface CircleColliderComp extends Comp {
+  filterGroupIdx: number;
+}
+
 export function circleCollider(opt: CircleColliderOpt) {
   let _fixture: Fixture;
   return {
@@ -118,13 +125,21 @@ export function circleCollider(opt: CircleColliderOpt) {
       console.log("collider destroy");
       this.body.destroyFixture(_fixture);
     },
+    // draw() {
+    //   k.drawCircle({
+    //     pos: p2k(this.body.getPosition()),
+    //     // pos: this.pos,
+    //     radius: opt.radius,
+    //     color: k.rgb(0, 0, 255),
+    //   });
+    // },
     set filterGroupIdx(index: number) {
-      _fixture.setFilterGroupIndex(index)
+      _fixture.setFilterGroupIndex(index);
     },
 
     get filterGroupIdx() {
-      return _fixture.getFilterGroupIndex()
-    }
+      return _fixture.getFilterGroupIndex();
+    },
   };
 }
 
