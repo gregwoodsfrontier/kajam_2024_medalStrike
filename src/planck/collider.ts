@@ -97,6 +97,7 @@ export function collider(
 
 export type CircleColliderOpt = ColliderOpt & {
   offset?: V2;
+  filterGroupIdx?: number;
   radius: number;
 };
 
@@ -120,19 +121,21 @@ export function circleCollider(opt: CircleColliderOpt) {
         restitution: opt.bounciness || 0,
         isSensor: opt.isTrigger,
       });
+      _fixture.setFilterGroupIndex(opt.filterGroupIdx || 1)
     },
     destroy() {
       console.log("collider destroy");
       this.body.destroyFixture(_fixture);
     },
-    // draw() {
-    //   k.drawCircle({
-    //     pos: p2k(this.body.getPosition()),
-    //     // pos: this.pos,
-    //     radius: opt.radius,
-    //     color: k.rgb(0, 0, 255),
-    //   });
-    // },
+    draw() {
+      k.drawCircle({
+        pos: p2k(Vec2(this.body.getPosition().x, this.body.getPosition().y)),
+        // pos: p2k(this.body.m_xf.p),
+        // radius: opt.radius,
+        radius: _fixture.getShape().m_radius * 10,
+        color: k.rgb(0, 0, 255),
+      });
+    },
     set filterGroupIdx(index: number) {
       _fixture.setFilterGroupIndex(index);
     },

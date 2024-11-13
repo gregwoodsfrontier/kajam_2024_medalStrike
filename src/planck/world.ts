@@ -9,13 +9,26 @@ export enum COLLISION_EVENTS {
   PRE_SOLVE = "collision_pre_solve",
 }
 
+export const PLANCK_SETTINGS = {
+  TIMESTEP: 1/60,
+  VELOCITY_ITERATIONS: 10,
+  POSITION_ITERATIONS: 8
+}
+
+export function setPlanckWorld(_world: World) {
+  _world.setGravity(pV2(0, 0));
+  _world.step(PLANCK_SETTINGS.TIMESTEP, PLANCK_SETTINGS.VELOCITY_ITERATIONS, PLANCK_SETTINGS.POSITION_ITERATIONS);
+}
+
 export function p2k(v: pV2) {
   // return new Vec2(v.x * 10, v.y * 10);
   return k.vec2(v.x * 10, v.y * 10);
+  // return k.vec2(v.x / 10, v.y / 10);
 }
 
 export function k2p(v: kV2) {
   return pV2(v.x / 10, v.y / 10);
+  // return pV2(v.x * 10, v.y * 10);
 }
 
 export let world = new World({

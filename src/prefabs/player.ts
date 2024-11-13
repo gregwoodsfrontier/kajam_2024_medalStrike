@@ -14,6 +14,7 @@ export function createPlayer(
     _k.anchor("center"),
     _k.area(),
     _k.rotate(0),
+    _k.scale(1),
     rigidBody({
       type: "dynamic",
       freezeRotation: true,

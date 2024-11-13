@@ -1,21 +1,11 @@
 import { k } from "./kaplay";
-import { Vec2 as pV2, World } from "planck";
-import { p2k, world } from "./planck/world";
+import { p2k, setPlanckWorld, world } from "./planck/world";
 import { Game, GameObj, KAPLAYCtx, SpriteComp, TweenController } from "kaplay";
 import { rigidBody, RigidBodyComp } from "./planck/rigid_body";
 import { circleCollider, edgeCollider } from "./planck/collider";
-import { slingLine } from "./comps/slingLine";
 import { createPlayer } from "./prefabs/player";
 
-export function setPlanckWorld(_world: World) {
-  const timeStep = 1 / 60;
-  const velocityIterations = 10;
-  const positionIterations = 8;
-  _world.setGravity(pV2(0, 0));
-  _world.step(timeStep, velocityIterations, positionIterations);
-}
-
-
+export const GAME_SCENE_KEY = "game"
 
 export function createEnemy(_k: KAPLAYCtx, _posx: number, _posy: number): void {
   const e = _k.add([
@@ -66,16 +56,7 @@ export function createBounds(_k: KAPLAYCtx, _width: number, _height: number) {
 }
 
 export const createGameScene = () => {
-  function createTween(_obj: GameObj) {
-    const tw = k.tween(1, 0.5, 1, (v) => {
-      _obj.scale = k.vec2(v, v)
-    })
-    
-    return tw
-  }
-
-  let currTw: TweenController | undefined = undefined
-
+  
   k.onUpdate(() => {
     setPlanckWorld(world);
 
@@ -93,19 +74,14 @@ export const createGameScene = () => {
       }
 
       obj.angularVelocity = 2
-      obj.use("scale")
-      if(currTw) return
-      currTw = createTween(obj)
-      currTw.onEnd(() => {
-        console.log("despawn bean here")
-        obj.destroy()
-        currTw = undefined
-      })
 
-      // k.wait(0.75, () => {
-      //   console.log("despawn bean here")
-      //   // obj.destroy()
-      // })
+      if(obj.is("scale")) {
+        if (obj.scale.x > 0.51) {
+          obj.scaleTo(k.lerp(obj.scale.x, 0.5, 1/15))
+        } else {
+          obj.destroy()
+        }
+      }
     });
   });
 
@@ -136,7 +112,7 @@ export const createGameScene = () => {
   });
 
   const enemyCoords = [
-    { x: k.width() * 0.35, y: k.height() * 0.5 },
+    // { x: k.width() * 0.35, y: k.height() * 0.5 },
     { x: k.width() * 0.55, y: k.height() * 0.5 },
     { x: k.width() * 0.45, y: k.height() * 0.6 },
   ];
