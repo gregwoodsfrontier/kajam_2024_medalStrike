@@ -1,5 +1,7 @@
+import { createBounds } from "./game-scene"
 import { k } from "./kaplay"
 import { setPlanckWorld, world } from "./planck/world"
+import { createPlayer } from "./prefabs/player"
 import { createTomb } from "./prefabs/tomb"
 import { createZombie } from "./prefabs/zombie"
 
@@ -10,6 +12,8 @@ export const createTestScene = () => {
         setPlanckWorld(world)
     })
 
+    createBounds(k, 1024, 512);
+
     const tomb = createTomb(k, k.width()/2, k.height()/2)
 
     k.onKeyPress("space", () => {
@@ -18,7 +22,9 @@ export const createTestScene = () => {
     })
 
     // const z = createZombie(k, k.width()/2, k.height()/2)
-    // const z = createZombie(k, 100, 100)
+    
+    // const z = createZombie(k, k.width()/2 - 100, k.height()/2 - 100)
+    const p = createPlayer(k, k.width()/2 - 100, k.height()/2 - 100)
 
     // z.addForce(k.vec2(50000, 0))
 

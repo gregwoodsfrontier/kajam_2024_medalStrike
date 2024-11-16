@@ -8,7 +8,7 @@ import {
   Vec2,
   Fixture,
 } from "planck";
-import { k2p, p2k } from "./world";
+import { k2p, p2k, toMeters, toPixels } from "./world";
 import { RigidBodyComp } from "./rigid_body";
 import { k } from "../kaplay";
 
@@ -114,7 +114,7 @@ export function circleCollider(opt: CircleColliderOpt) {
       _fixture = this.body.createFixture({
         shape: new CircleShape(
           opt.offset ? k2p(opt.offset) : Vec2(0, 0),
-          opt.radius / 10
+          toMeters(opt.radius)
         ),
         density: 1,
         friction: opt.friction || 0,
@@ -127,15 +127,15 @@ export function circleCollider(opt: CircleColliderOpt) {
       console.log("collider destroy");
       this.body.destroyFixture(_fixture);
     },
-    draw() {
-      k.drawCircle({
-        pos: p2k(Vec2(this.body.getPosition().x, this.body.getPosition().y)),
-        // pos: p2k(this.body.m_xf.p),
-        // radius: opt.radius,
-        radius: _fixture.getShape().m_radius * 10,
-        color: k.rgb(0, 0, 255),
-      });
-    },
+    // draw() {
+    //   k.drawCircle({
+    //     pos: k.vec2(0,0),
+    //     // pos: p2k(Vec2(this.body.getPosition().x, this.body.getPosition().y)),
+    //     radius: toPixels(_fixture.getShape().m_radius),
+    //     color: k.rgb(0, 0, 255),
+    //     anchor:'center'
+    //   });
+    // },
     set filterGroupIdx(index: number) {
       _fixture.setFilterGroupIndex(index);
     },

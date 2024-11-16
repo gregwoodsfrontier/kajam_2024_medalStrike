@@ -21,7 +21,7 @@ export function slingLine(_opt: SlingLineOpt) {
             });
             k.onMouseRelease(() => {
                 if (isAreaPressed == true) {
-                const v = this.pos.sub(k.mousePos());
+                const v = this.pos.sub(k.mousePos()).unit();
                 let speed = _opt.speed || 1;
 
                 this.addForce(v.scale(speed));

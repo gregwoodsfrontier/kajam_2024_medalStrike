@@ -27,7 +27,7 @@ export function createPlayer(
       bounciness: 0.8,
     }),
     slingLine({
-      speed: 5000,
+      speed: 5e5,
     }),
     "player",
   ]);

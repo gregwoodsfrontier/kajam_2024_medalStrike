@@ -2,6 +2,7 @@ import { KAPLAYCtx, GameObj, PosComp } from "kaplay";
 import { circleCollider } from "../planck/collider";
 import { rigidBody, RigidBodyComp } from "../planck/rigid_body";
 import { slingLine } from "../comps/slingLine";
+import { toMeters } from "../planck/world";
 
 export type ZombieOpt = {
   speed: number
@@ -14,7 +15,8 @@ export function createZombie(
 ): GameObj<PosComp|RigidBodyComp|ZombieOpt> {
   const phyObj = _k.add([
     {
-      speed: 50000 * 5
+      launchForce: 5e5,
+      velThres: 100
     },
     _k.sprite("skuller-o"),
     _k.opacity(0),
@@ -34,16 +36,44 @@ export function createZombie(
       bounciness: 0.8,
       filterGroupIdx: 1
     }),
-    // slingLine({
-    //   speed: 2500
-    // }),
+    _k.state("idle", ["idle", "aim", "launch"]),
     "zombie"
   ])
   phyObj.add([
     _k.pos(0, 0),
     _k.sprite("skuller-o"),
-    _k.anchor("center")
+    _k.anchor("center"),
+    _k.z(-1)
   ])
+
+  phyObj.onStateEnter("idle", async () => {
+    await _k.wait(1)
+    phyObj.enterState("aim")
+  })
+
+  phyObj.onStateEnter("aim", async () => {
+    const p = _k.get("player")[0]
+    if(p.exists()) {
+      await _k.wait(0.5)
+      phyObj.enterState("launch")
+      return
+    }
+    phyObj.enterState("idle")
+  })
+
+  phyObj.onStateEnter("launch", () => {
+    const p = _k.get("player")[0]
+    if(p.exists()) {
+      const dir = p.pos.sub(phyObj.pos).unit()
+      phyObj.addForce(dir.scale(phyObj.launchForce))
+    }
+  })
+
+  phyObj.onStateUpdate("launch", () => {
+    if(phyObj.velocity.len() < phyObj.velThres) {
+      phyObj.enterState("idle")
+    }
+  })
 
   return phyObj;
 }

@@ -14,7 +14,7 @@ export function createTomb(
     _k.pos(_posx, _posy),
     _k.anchor("center"),
     _k.timer(),
-    _k.scale(2),
+    _k.scale(1),
     spawner()
   ])
 

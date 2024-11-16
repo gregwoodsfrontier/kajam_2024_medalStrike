@@ -12,7 +12,18 @@ export enum COLLISION_EVENTS {
 export const PLANCK_SETTINGS = {
   TIMESTEP: 1/60,
   VELOCITY_ITERATIONS: 10,
-  POSITION_ITERATIONS: 8
+  POSITION_ITERATIONS: 8,
+  WORLDSCALE: 10 // pixels to meters ratio
+}
+
+// simple function to convert meters to pixels
+export function toPixels(_n: number) {
+  return _n * PLANCK_SETTINGS.WORLDSCALE
+}
+
+// simple function to convert pixels to meters
+export function toMeters(_n: number) {
+  return _n / PLANCK_SETTINGS.WORLDSCALE
 }
 
 export function setPlanckWorld(_world: World) {
@@ -21,14 +32,11 @@ export function setPlanckWorld(_world: World) {
 }
 
 export function p2k(v: pV2) {
-  // return new Vec2(v.x * 10, v.y * 10);
-  return k.vec2(v.x * 10, v.y * 10);
-  // return k.vec2(v.x / 10, v.y / 10);
+  return k.vec2(toPixels(v.x), toPixels(v.y));
 }
 
 export function k2p(v: kV2) {
-  return pV2(v.x / 10, v.y / 10);
-  // return pV2(v.x * 10, v.y * 10);
+  return pV2(toMeters(v.x), toMeters(v.y));
 }
 
 export let world = new World({
