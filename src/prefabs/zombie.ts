@@ -4,15 +4,15 @@ import { rigidBody, RigidBodyComp } from "../planck/rigid_body";
 import { slingLine } from "../comps/slingLine";
 import { toMeters } from "../planck/world";
 
-export type ZombieOpt = {
-  speed: number
-}
+// export type ZombieOpt = {
+//   speed: number
+// }
 
 export function createZombie(
   _k: KAPLAYCtx,
   _posx: number,
   _posy: number
-): GameObj<PosComp|RigidBodyComp|ZombieOpt> {
+): GameObj<PosComp|RigidBodyComp> {
   const phyObj = _k.add([
     {
       launchForce: 5e5,
@@ -56,9 +56,9 @@ export function createZombie(
     if(p.exists()) {
       await _k.wait(0.5)
       phyObj.enterState("launch")
-      return
+    } else {
+      phyObj.enterState("idle")
     }
-    phyObj.enterState("idle")
   })
 
   phyObj.onStateEnter("launch", () => {
@@ -75,5 +75,5 @@ export function createZombie(
     }
   })
 
-  return phyObj;
+  return phyObj
 }
