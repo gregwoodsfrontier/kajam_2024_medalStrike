@@ -3,6 +3,7 @@ import { circleCollider } from "../planck/collider";
 import { rigidBody, RigidBodyComp } from "../planck/rigid_body";
 import { slingLine } from "../comps/slingLine";
 import { toMeters } from "../planck/world";
+import { LAYER_NAME } from "../utils";
 
 // export type ZombieOpt = {
 //   speed: number
@@ -18,6 +19,7 @@ export function createZombie(
       launchForce: 5e5,
       velThres: 100
     },
+    _k.layer(LAYER_NAME.GAME),
     _k.sprite("skuller-o"),
     _k.opacity(0),
     _k.pos(_posx, _posy),
@@ -36,7 +38,7 @@ export function createZombie(
       bounciness: 0.8,
       filterGroupIdx: 1
     }),
-    _k.state("idle", ["idle", "aim", "launch"]),
+    _k.state("idle", ["idle", "aim", "launch", "dead"]),
     "zombie"
   ])
   phyObj.add([
@@ -53,7 +55,7 @@ export function createZombie(
 
   phyObj.onStateEnter("aim", async () => {
     const p = _k.get("player")[0]
-    if(p.exists()) {
+    if(p !== undefined) {
       await _k.wait(0.5)
       phyObj.enterState("launch")
     } else {
@@ -63,7 +65,7 @@ export function createZombie(
 
   phyObj.onStateEnter("launch", () => {
     const p = _k.get("player")[0]
-    if(p.exists()) {
+    if(p !== undefined) {
       const dir = p.pos.sub(phyObj.pos).unit()
       phyObj.addForce(dir.scale(phyObj.launchForce))
     }
@@ -74,6 +76,16 @@ export function createZombie(
       phyObj.enterState("idle")
     }
   })
+
+  phyObj.onStateEnter("dead", async () => {
+    _k.wait(0.5, () => {
+      phyObj.trigger("zombie_destroyed")
+      _k.destroy(phyObj)
+      
+    })
+  })
+
+  phyObj.trigger("zombie_spawned")
 
   return phyObj
 }

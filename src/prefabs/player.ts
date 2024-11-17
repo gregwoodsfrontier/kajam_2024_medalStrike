@@ -2,6 +2,7 @@ import { KAPLAYCtx, GameObj } from "kaplay";
 import { slingLine } from "../comps/slingLine";
 import { circleCollider } from "../planck/collider";
 import { rigidBody } from "../planck/rigid_body";
+import { LAYER_NAME } from "../utils";
 
 export function createPlayer(
   _k: KAPLAYCtx,
@@ -9,6 +10,7 @@ export function createPlayer(
   _posy: number
 ): GameObj {
   const p = _k.add([
+    _k.layer(LAYER_NAME.GAME),
     _k.pos(_posx, _posy),
     _k.sprite("bean"),
     _k.anchor("center"),
@@ -27,11 +29,19 @@ export function createPlayer(
       bounciness: 0.8,
     }),
     slingLine({
-      speed: 5e5,
+      speed: 2e5,
     }),
+    _k.state("alive", ["alive", "dead"]),
     "player",
   ]);
+
   p.filterGroupIdx = 1;
+
+  p.onStateEnter("dead", async () => {
+    _k.wait(0.5, () => {
+      _k.destroy(p)
+    })
+  })
 
   return p;
 }

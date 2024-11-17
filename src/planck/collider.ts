@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Comp, RectComp, SpriteComp, Vec2 as V2 } from "kaplay";
 import {
   Box,
