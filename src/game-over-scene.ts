@@ -16,7 +16,7 @@ export const createGameOverScene = ({score}) => {
     ])
     bottle.add([
         k.pos(0,0),
-        k.rect(500, 100),
+        k.rect(600, 100),
         k.color(255, 0, 0),
         k.anchor("center"),
     ])

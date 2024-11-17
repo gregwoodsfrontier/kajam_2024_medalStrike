@@ -17,4 +17,4 @@ k.scene(TEST_SCENE_KEY, createTestScene)
 
 // k.go(TEST_SCENE_KEY);
 k.go(GAME_SCENE_KEY);
-// k.go(GAME_OVER_SCENE_KEY)
+// k.go(GAME_OVER_SCENE_KEY, {score: 10})
