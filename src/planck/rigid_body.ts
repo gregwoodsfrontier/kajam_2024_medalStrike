@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { GameObj, Comp, Vec2 as V2, PosComp, RotateComp } from "kaplay";
 // import "kaplay/global";
 import { k } from "../kaplay";

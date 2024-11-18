@@ -40,7 +40,7 @@ add([
   pos(200, 300),
   rotate(0),
   rigidBody({ type: "static" }),
-  collider({ friction: 0.5 }),
+  // collider({ friction: 0.5 }),
 //   surfaceEffector({ speed: 100 }),
 ]);
 

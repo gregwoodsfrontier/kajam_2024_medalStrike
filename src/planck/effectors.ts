@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { Comp, GameObj } from "kaplay";
 import { Contact, Manifold, Vec2 as pV2 } from "planck";
 import { RigidBodyComp } from "./rigid_body";

@@ -41,85 +41,108 @@ export const createTestScene = () => {
         k.go(GAME_OVER_SCENE_KEY, { score: scoreObj.value })
     }
 
-    // const setupPhyDestory = () => {
-    //     k.get("QDestroy").forEach((obj: GameObj) => {
-    //         if(obj.is("circleCollider")) {
-    //           obj.filterGroupIdx = -1
-    //         } else {
-    //           console.error("No circle collider for this obj")
-    //         }
-      
-    //         if(obj.is("rigidBody")) {
-    //           obj.linearDrag = 7
-    //         } else {
-    //           console.error("No rigidBody for this obj")
-    //         }
-      
-    //         obj.angularVelocity = 2
-      
-    //         if(obj.is("scale")) {
-    //           if (obj.scale.x > 0.51) {
-    //             obj.scaleTo(k.lerp(obj.scale.x, 0.5, 1/15))
-    //           } else {
-    //             obj.destroy()
-    //           }
-    //         }
-    //       });
-    // }
+    const levelChar = [
+        "1^^^^^^^^^^^^^^2",
+        "[              ]",
+        "[              ]",
+        "[              ]",
+        "[              ]",
+        "[              ]",
+        "[              ]",
+        "3vvvvvvvvvvvvvv4"
+    ]
 
-    // scoreIncrementer.cancel()
+    createBounds(k, 1024, 512, false);
 
+    const level = k.addLevel(levelChar, {
+        tileWidth: 64,
+        tileHeight: 64,
+        pos: k.vec2(128 + 32, 104 + 32),
+        tiles: {
+            "1": () => [
+                k.sprite("grave-tile", {
+                    frame: 0
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(0)
+            ],
+            "2": () => [
+                k.sprite("grave-tile", {
+                    frame: 0
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(90)
+            ],
+            "3": () => [
+                k.sprite("grave-tile", {
+                    frame: 0
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(-90)
+            ],
+            "4": () => [
+                k.sprite("grave-tile", {
+                    frame: 0
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(180)
+            ],
+            "^": () => [
+                k.sprite("grave-tile", {
+                    frame: 1
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(0)
+            ],
+            "v": () => [
+                k.sprite("grave-tile", {
+                    frame: 1
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(180)
+            ],
+            "[": () => [
+                k.sprite("grave-tile", {
+                    frame: 1
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(-90)
+            ],
+            "]": () => [
+                k.sprite("grave-tile", {
+                    frame: 1
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(90)
+            ],
+            " ": () => [
+                k.sprite("grave-tile", {
+                    frame: 2
+                }),
+                k.layer(LAYER_NAME.GAME),
+                k.anchor("center"),
+                k.rotate(90)
+            ],
+        }
+    })
+    
     k.onUpdate(() => {
         setPlanckWorld(world)
-
-        // setupPhyDestory()
 
         setGameOverCondition()
     })
 
-    createBounds(k, 1024, 512);
 
-    const tomb = createTomb(k, k.width()/2, k.height()/2)
+    // const tomb = createTomb(k, k.width()/2, k.height()/2)
 
-    k.onKeyPress("space", () => {
-        tomb.isSpawnerActive = !tomb.isSpawnerActive
-        console.log("tomb is ", tomb.isSpawnerActive)
-    })
-
-    // const z = createZombie(k, k.width()/2, k.height()/2)
-    
-    // const z = createZombie(k, k.width()/2 - 100, k.height()/2 - 100)
     const p = createPlayer(k, k.width()/2 - 100, k.height()/2 - 100)
 
-    // z.addForce(k.vec2(50000, 0))
-
-    // k.onMousePress(() => {
-    //     // const v = z.pos.sub(k.mousePos());
-    //     const v = k.mousePos().sub(z.pos)
-    //     z.addForce(v.unit().scale(z.speed))
-    // })
-
-    // const sensor = k.add([
-    //     k.pos(250, 400),
-    //     k.circle(64),
-    //     k.color(134, 255, 100),
-    //     k.outline(4),
-    //     k.rotate(0),
-    //     rigidBody({
-    //       type: "static",
-    //     }),
-    //   ]);
-    //   sensor.use(
-    //     circleCollider({
-    //       radius: sensor.radius,
-    //       isTrigger: true,
-    //     })
-    //   );
-    //   sensor.onCollisionEnter((_body: GameObj) => {
-    //     sensor.color = k.rgb(255, 0, 0);
-    //     _body.use("QDestroy");
-    //   });
-    //   sensor.onCollisionExit(() => {
-    //     sensor.color = k.rgb(134, 255, 100);
-    //   });
 }

@@ -9,6 +9,6 @@ export const k = kaplay({
   height: 720,
   // stretch: true,
   debug: true,
-  background: [0, 255, 255],
+  background: [69, 43, 43],
   //   plugins: [planckIntegration],
 });

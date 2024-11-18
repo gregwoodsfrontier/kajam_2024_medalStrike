@@ -10,6 +10,99 @@ import { createTomb } from "./prefabs/tomb";
 
 export const GAME_SCENE_KEY = "game"
 
+export const levelChar = [
+  "1^^^^^^^^^^^^^^2",
+  "[              ]",
+  "[              ]",
+  "[              ]",
+  "[              ]",
+  "[              ]",
+  "[              ]",
+  "3vvvvvvvvvvvvvv4"
+]
+
+export function renderGround(_k: KAPLAYCtx , _inputChar: string[]): GameObj {
+  return _k.addLevel(_inputChar, {
+    tileWidth: 64,
+    tileHeight: 64,
+    pos: k.vec2(128 + 32, 104 + 32),
+    tiles: {
+        "1": () => [
+            k.sprite("grave-tile", {
+                frame: 0
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(0)
+        ],
+        "2": () => [
+            k.sprite("grave-tile", {
+                frame: 0
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(90)
+        ],
+        "3": () => [
+            k.sprite("grave-tile", {
+                frame: 0
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(-90)
+        ],
+        "4": () => [
+            k.sprite("grave-tile", {
+                frame: 0
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(180)
+        ],
+        "^": () => [
+            k.sprite("grave-tile", {
+                frame: 1
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(0)
+        ],
+        "v": () => [
+            k.sprite("grave-tile", {
+                frame: 1
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(180)
+        ],
+        "[": () => [
+            k.sprite("grave-tile", {
+                frame: 1
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(-90)
+        ],
+        "]": () => [
+            k.sprite("grave-tile", {
+                frame: 1
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(90)
+        ],
+        " ": () => [
+            k.sprite("grave-tile", {
+                frame: 2
+            }),
+            k.layer(LAYER_NAME.GAME),
+            k.anchor("center"),
+            k.rotate(90)
+        ],
+    }
+  })
+}
+
 export function createEnemy(_k: KAPLAYCtx, _posx: number, _posy: number): void {
   const e = _k.add([
     _k.sprite("bean"),
@@ -44,7 +137,7 @@ export function createBounds(_k: KAPLAYCtx, _width: number, _height: number, _is
   const b = _k.add([
     _k.layer(LAYER_NAME.GAME),
     _k.polygon(points),
-    _k.outline(4, _k.rgb(255, 0, 255)),
+    // _k.outline(4, _k.rgb(255, 0, 255)),
     _k.color(255, 255, 10),
     _k.pos(_k.width() / 2 - _width / 2, _k.height() / 2 - _height / 2),
     _k.rotate(0),
@@ -159,14 +252,17 @@ export const createGameScene = () => {
 
   createBounds(k, 1024, 512, true);
 
+  renderGround(k, levelChar)
+
   const tomb = createTomb(k, k.width()/2, k.height()/2)
 
-  k.onKeyPress("space", () => {
-      tomb.isSpawnerActive = !tomb.isSpawnerActive
-      console.log("tomb is ", tomb.isSpawnerActive)
-  })
-
   const p = createPlayer(k, k.width()/2 - 100, k.height()/2 - 100)
+
+  if(tomb.isSpawnerActive === false) {
+    k.wait(1, () => {
+      tomb.isSpawnerActive = true
+    })
+  }
 
   // z.addForce(k.vec2(50000, 0))
 
