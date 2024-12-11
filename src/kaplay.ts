@@ -1,5 +1,6 @@
 import kaplay from "kaplay";
 import { planckIntegration } from "./planck/world";
+import KaPlanckPlugin from "kaplanck";
 
 // Plugin Link: https://github.com/mflerackers/KaboomJSPlanckIntegration/tree/main
 
@@ -10,5 +11,5 @@ export const k = kaplay({
   // stretch: true,
   debug: true,
   background: [69, 43, 43],
-  //   plugins: [planckIntegration],
+  plugins: [KaPlanckPlugin()],
 });
