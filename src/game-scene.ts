@@ -161,6 +161,7 @@ export function createBounds(_k: KAPLAYCtx, _width: number, _height: number, _is
 
 export const createGameScene = () => {
 
+  // define the layers of the scene here.
   if(!GAME_PARAMS.isLayerDefined) {
     k.layers(
       [
@@ -172,6 +173,8 @@ export const createGameScene = () => {
     )
     GAME_PARAMS.isLayerDefined = true
   }
+
+  
 
   
 
