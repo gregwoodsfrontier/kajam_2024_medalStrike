@@ -23,6 +23,8 @@ export const createTestScene = () => {
       type: "static",
     }),
     k.kpFixture(),
+    k.sprite("bean"),
+    k.anchor("center"),
   ]);
 
   // 5. Add a ball by creating a dynamic body with a circle shape.
@@ -30,11 +32,14 @@ export const createTestScene = () => {
     k.kpPos(k.kpCenter().sub({ x: k.rand(-10, 10), y: k.rand(10, 15) })),
     k.kpRotate(),
     k.kpCircleShape({
-      radius: 1,
+      radius: 2,
       draw: true,
     }),
     k.kpBody({ type: "dynamic" }),
     k.kpFixture({ density: 1, friction: 0.3, restitution: 0.5 }),
     k.offscreen({ destroy: true }),
+    k.sprite("bean"),
+    k.anchor("center"),
   ]);
+
 };
