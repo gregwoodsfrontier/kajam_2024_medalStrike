@@ -9,6 +9,7 @@
 		"zip": "npm run build && mkdir -p dist && zip -r dist/game.zip www -x \"**/.DS_Store\""
 	},
 	"dependencies": {
+		"kaplanck": "^1.5.0",
 		"kaplay": "^3001.0.2",
 		"planck": "^1.0.6"
 	},
